@@ -18,20 +18,36 @@ namespace SageAufbaukursCSharp.ServiceImplementations
 
         public string DateiMitPfad { private get;  set; }
 
+        private string _path;
+
         public bool Save(object beleg)
         {
 
             try
             {
 
-                using (var sw = new StreamWriter(""))
+                using (var sw = new StreamWriter(_path))
                 {
                     sw.Write("Hallo");
                 }
                 return true ;
             }
-            catch(UnauthorizedAccessException uae)
+            catch (UnauthorizedAccessException uae)
             {
+                Message = uae.Message;
+                Fault = uae;
+                return false;
+            }
+            catch (PathTooLongException uae)
+            {
+                var Dateiname = Path.GetFileName(_path);
+                var DateiExt = Path.GetExtension(_path);
+                int LaengePfad = _path.Length;
+                int LaengeDatei = Dateiname.Length;
+                int LaengeDateiExt = Dateiname.Length;
+                Dateiname = Dateiname.Substring(1, 254 - LaengePfad - LaengeDateiExt);
+                _path=
+
                 Message = uae.Message;
                 Fault = uae;
                 return false;
